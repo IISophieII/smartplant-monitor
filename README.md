@@ -8,6 +8,14 @@
 
 面向自动化专业的软件工程实践项目：模拟工业电机的温度、振动、转速、电流，完成采集、持久化、异常检测和网页展示。无需 PLC 或传感器即可运行，也可通过真实 Modbus TCP 协议连接独立模拟设备。
 
+## 83 秒演示视频
+
+[![点击观看 SmartPlant Monitor 演示](docs/media/demo-cover.png)](https://github.com/IISophieII/smartplant-monitor/blob/main/docs/media/smartplant-demo.mp4)
+
+[观看或下载 MP4](https://github.com/IISophieII/smartplant-monitor/raw/refs/heads/main/docs/media/smartplant-demo.mp4) · 83 秒 · 约 1.7 MB · 无声 · 中英文说明。
+
+演示包含正常运行、渐进故障、异常解释、恢复和语言切换。部分等待片段为 2 倍速，画面已标注。使用合成设备数据，非真实工业故障验证。
+
 ## 快速启动
 
 建议 Python 3.13，兼容 3.12。Windows PowerShell：

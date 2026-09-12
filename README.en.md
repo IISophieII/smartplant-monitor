@@ -6,6 +6,14 @@ Industrial equipment monitoring and anomaly detection, built with AI collaborati
 
 Simulate motor temperature, vibration, speed, and current; collect data, persist it in SQLite, and visualize anomalies detected with Isolation Forest and demonstration thresholds. No physical hardware is required. A standalone Modbus TCP simulator and client are included.
 
+## 83-second demo video
+
+[![Watch the SmartPlant Monitor demo](docs/media/demo-cover.png)](https://github.com/IISophieII/smartplant-monitor/blob/main/docs/media/smartplant-demo.mp4)
+
+[Watch or download the MP4](https://github.com/IISophieII/smartplant-monitor/raw/refs/heads/main/docs/media/smartplant-demo.mp4) · 83 seconds · About 1.7 MB · Silent · English and Chinese captions.
+
+Shows normal operation, progressive fault injection, anomaly explanations, recovery, and language switching. Selected waiting sections run at 2x speed, labeled on screen. Uses synthetic device data, not validation on real industrial faults.
+
 ## Quick start
 
 Python 3.13 is recommended; 3.12 is supported. Clone or download the repository and open a terminal in its directory:
