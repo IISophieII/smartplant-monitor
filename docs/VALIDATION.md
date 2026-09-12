@@ -20,8 +20,8 @@
 ## 尚未完成/不能据此声称
 
 - 本机没有 Docker，未实际构建镜像或启动 Compose。
-- 本机运行的是 Python 3.12；3.13 已配置到 Docker 与 GitHub Actions，但此处尚未执行。
-- GitHub 连接确认账号为 IISophieII，但连接器返回可用仓库为空且无创建仓库接口。远端推送与 Actions 执行待可访问仓库就绪。
+- 本机运行的是 Python 3.12；GitHub Actions 已在 Ubuntu 上完成 Python 3.12 和 3.13 两组检查，均通过。
+- 项目已上传至 IISophieII/smartplant-monitor。自动测试记录：https://github.com/IISophieII/smartplant-monitor/actions/runs/34704636127 （代码提交 215976360fd0e1751809b73c4434198ec99e3286，2026-09-13 北京时间）。
 - 未连接真实 PLC、真实电机或传感器；没有真实工业数据精度、误报率、性能基准或生产可靠性结论。
 
 ## 本地复查
@@ -32,3 +32,4 @@ ruff check .
 ```
 
 若默认临时目录不可访问，可指定一个可写的新目录，例如 `pytest -q --basetemp=./work-test-temp`。pytest 会管理这个临时目录，不要指向已有重要文件的目录。
+
