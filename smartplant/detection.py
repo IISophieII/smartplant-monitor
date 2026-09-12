@@ -15,9 +15,9 @@ class Detector:
     def evaluate(self, values):
         margin = float(self.model.decision_function([[values[k] for k in FIELDS]])[0])
         reasons = []
-        for key, threshold, label in [("temperature", 65, "温度超过演示阈值 65°C"),
-                                      ("vibration", 4.5, "振动超过演示阈值 4.5 mm/s"),
-                                      ("current", 5.5, "电流超过演示阈值 5.5 A")]:
+        for key, threshold, label in [("temperature", 65, "Temperature exceeds the demo threshold of 65°C"),
+                                      ("vibration", 4.5, "Vibration exceeds the demo threshold of 4.5 mm/s"),
+                                      ("current", 5.5, "Current exceeds the demo threshold of 5.5 A")]:
             if values[key] > threshold:
                 reasons.append(label)
         risk = float(np.clip(-margin / 0.25, 0, 1))
@@ -25,4 +25,4 @@ class Detector:
             risk = max(risk, 0.75)
         status = "critical" if reasons else "warning" if margin < 0 else "normal"
         return {"anomaly_margin": round(margin, 4), "health": round(100*(1-risk)),
-                "status": status, "reasons": reasons or (["偏离合成正常基线"] if margin < 0 else [])}
+                "status": status, "reasons": reasons or (["Deviation from the synthetic normal baseline"] if margin < 0 else [])}

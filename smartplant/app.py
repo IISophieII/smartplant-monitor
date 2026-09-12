@@ -50,7 +50,7 @@ def create_app(db_path=None, interval=1.0, source=None):
                     app.state.error = None
                 except Exception:
                     logging.exception("Telemetry collection failed")
-                    app.state.error = "采集失败，正在重试；显示的是最后一次成功数据"
+                    app.state.error = "Collection failed. Retrying; showing the last successful sample, if available."
                 await asyncio.sleep(interval)
 
         task = asyncio.create_task(collect())
