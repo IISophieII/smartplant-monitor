@@ -8,6 +8,8 @@ Simulate motor temperature, vibration, speed, and current; collect data, persist
 
 ## 83-second demo video
 
+The current version adds timestamped charts with scales, threshold lines and interactive readings, plus persistent alarm history and acknowledgement. The video below shows the earlier V1 interface; screenshots have been updated.
+
 [![Watch the SmartPlant Monitor demo](docs/media/demo-cover.png)](https://github.com/IISophieII/smartplant-monitor/blob/main/docs/media/smartplant-demo.mp4)
 
 [Watch or download the MP4](https://github.com/IISophieII/smartplant-monitor/raw/refs/heads/main/docs/media/smartplant-demo.mp4) · 83 seconds · About 1.7 MB · Silent · English and Chinese captions.
@@ -144,7 +146,17 @@ SQLite uses a persistent named volume. The dashboard port binds to localhost. Th
 | GET | `/api/history?limit=120` | Latest N samples, chronological order; N = 1..3600 |
 | POST | `/api/simulation` | `{"mode":"normal"}` or `{"mode":"progressive_fault"}` |
 
-API identifiers are language-neutral; explanation/error text is English. The dashboard translates those messages for Chinese users. Timestamps use UTC in storage and local time in the dashboard. SQLite retains 86,400 samples (roughly a day at 1 Hz). Set `DATABASE_PATH` to override `data/smartplant.db`. V1 does not include time-range queries, alarm acknowledgement, or MQTT.
+API identifiers are language-neutral; explanation/error text is English. The dashboard translates those messages for Chinese users. Timestamps use UTC in storage and local time in the dashboard. SQLite retains 86,400 samples (roughly a day at 1 Hz). Set `DATABASE_PATH` to override `data/smartplant.db`. Time-range queries and MQTT are not implemented.
+
+### Alarm history and charts
+
+- `GET /api/alarms?limit=100` lists newest alarms first; limit accepts 1..1000.
+- `POST /api/alarms/{id}/acknowledge` acknowledges an event. Repeated requests preserve the original acknowledgement time; unknown IDs return 404.
+- Each device starts an event on a warning or critical observation. Consecutive abnormal samples update that event, retaining its highest severity and accumulated reasons. The first subsequent normal sample records recovery. Acknowledging does not clear a fault; acknowledgement remains attached to the event even if severity escalates.
+- The alarm table is created automatically in the existing SQLite database. Old samples are not backfilled. Alarms persist across restarts and currently have no automatic retention limit. Recovery during a collection outage or server downtime cannot be inferred.
+- Every normal/abnormal transition is recorded without debounce. Occasional model warnings on synthetic normal data can produce short events.
+- Baseline chart ranges are 30..90°C, 0..9 mm/s, 1150..1550 rpm, and 0..8 A. Ranges expand for outliers. The horizontal axis uses actual timestamps; yellow dashed lines show demo thresholds. Speed has no configured rule threshold.
+- Hover or touch a chart for time and value; keyboard users can focus it with Tab and use arrow keys. Spacing reflects sample timing, but lines across collection gaps do not represent measured values.
 
 ## Detection limitations
 
@@ -166,7 +178,7 @@ Tests cover fault progression/recovery, persistence, API validation, failed and 
 
 ## Roadmap
 
-- V2: MQTT, multiple devices, alarm acknowledgement, time-range queries, optional InfluxDB.
+- V2: MQTT, multiple devices, alarm debounce and retention, time-range queries, optional InfluxDB.
 - V3: Real sensors/PLCs, rolling-window features, FFT, model versioning, evaluation by operating condition.
 
 The source `sample()` interface, detector, and storage module provide extension boundaries. These roadmap items are not current features.

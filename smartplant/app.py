@@ -91,6 +91,16 @@ def create_app(db_path=None, interval=1.0, source=None):
         app.state.source.set_mode(body.mode)
         return {"mode": body.mode}
 
+    @app.get("/api/alarms")
+    def alarms(limit: int = Query(100, ge=1, le=1000)):
+        return app.state.store.alarms(limit)
+
+    @app.post("/api/alarms/{alarm_id}/acknowledge")
+    def acknowledge(alarm_id: int):
+        if not app.state.store.acknowledge(alarm_id, datetime.now(timezone.utc).isoformat()):
+            raise HTTPException(404, "Alarm not found")
+        return {"acknowledged": True}
+
     return app
 
 

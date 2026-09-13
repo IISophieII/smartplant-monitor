@@ -4,6 +4,10 @@
 
 Checks were performed by the Codex AI collaborator, not claimed as personal acceptance testing by the project owner.
 
+## Charts and alarms update (September 13, 2026)
+
+Eight local tests passed, covering episode merging, escalation, recovery, idempotent acknowledgement, database reopening, per-device isolation, and API validation. Ruff passed. Real-browser checks covered chart axes, hover and keyboard readings, alarm creation/acknowledgement/recovery, both languages, and mobile layout. The health formula is unchanged. Alarm debounce and automatic retention are not implemented; see README for event semantics.
+
 ## Bilingual update (September 13, 2026)
 
 Six local pytest tests, Ruff, and JavaScript syntax checks passed. A real browser verified the English default, Chinese switching, persistence after reload, bilingual fault explanations, and recovery. Both languages passed the 390px mobile overflow check with no JavaScript errors. Actual screenshots were refreshed in both languages.

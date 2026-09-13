@@ -12,18 +12,16 @@ document.querySelectorAll('button[data-mode]').forEach(button=>button.onclick=as
 });
 async function refresh(){
   try{
-    const [state,history]=await Promise.all([request('/api/status'),request('/api/history?limit=120')]);
+    const [state,history,alarms]=await Promise.all([request('/api/status'),request('/api/history?limit=120'),request('/api/alarms?limit=100')]);
+    renderAlarms(alarms);
     $('connection').textContent=state.error?'● Collection error':'● Connected';
     $('error').textContent=state.error||'';
     $('mode').textContent=state.source==='modbus'?'Modbus TCP':state.mode==='normal'?'Normal simulation':'Progressive fault · Peaks in about 60 seconds';
     document.querySelectorAll('button[data-mode]').forEach(b=>b.disabled=state.source!=='simulator');
     const s=state.latest;if(!s){applyLanguage();return;}
-    fields.forEach(([key])=>{
+    fields.forEach(([key,,unit])=>{
       $(key).textContent=s[key].toFixed(key==='rpm'?0:2);
-      const values=history.map(x=>x[key]);if(!values.length)return;
-      const low=Math.min(...values),high=Math.max(...values),span=Math.max(high-low,0.1);
-      $(`line-${key}`).setAttribute('points',values.map((v,i)=>`${i*400/Math.max(values.length-1,1)},${105-(v-low)*95/span}`).join(' '));
-      $(`range-${key}`).textContent=` · ${low.toFixed(1)}–${high.toFixed(1)}`;
+      drawTrend(key,history,unit);
     });
     $('gauge').textContent=s.health;$('gauge').style.borderColor=s.status==='normal'?'#4dccaa':s.status==='warning'?'#f3c775':'#ff8e8e';
     $('status').textContent=labels[s.status];$('status').className=s.status;
@@ -32,6 +30,19 @@ async function refresh(){
     $('updated').textContent=`Last sample ${new Date(s.timestamp).toLocaleTimeString(language === 'zh' ? 'zh-CN' : 'en-GB')}`;
     $('rows').replaceChildren(...history.slice(-6).reverse().map(row=>{const tr=document.createElement('tr');[new Date(row.timestamp).toLocaleTimeString(language === 'zh' ? 'zh-CN' : 'en-GB'),row.temperature,row.vibration,row.rpm,row.current,labels[row.status]].forEach(value=>{const td=document.createElement('td');td.textContent=value;tr.append(td);});tr.lastChild.className=row.status;return tr;}));
   }catch(e){$('connection').textContent='● Disconnected';$('error').textContent=e.message+'. Retrying automatically; displayed data may be stale.';}
+}
+function renderAlarms(alarms) {
+  $('alarms').replaceChildren(...alarms.map(alarm=>{
+    const tr=document.createElement('tr');
+    const date=t=>t?new Date(t).toLocaleString(language==='zh'?'zh-CN':'en-GB',{hour12:false}):'Active';
+    [date(alarm.started_at),date(alarm.ended_at),labels[alarm.severity],alarm.reasons.join('; ')].forEach(value=>{const td=document.createElement('td');td.textContent=value;tr.append(td);});
+    tr.children[2].className=alarm.severity;
+    const td=document.createElement('td');
+    if(alarm.acknowledged_at){td.textContent='Acknowledged · '+date(alarm.acknowledged_at);}
+    else {const button=document.createElement('button');button.textContent='Acknowledge';button.onclick=async()=>{button.disabled=true;try{await request(`/api/alarms/${alarm.id}/acknowledge`,{method:'POST'});await refresh();}catch(e){$('error').textContent=e.message;button.disabled=false;}applyLanguage();};td.append(button);}
+    tr.append(td);return tr;
+  }));
+  if(!alarms.length){const tr=document.createElement('tr');const td=document.createElement('td');td.colSpan=5;td.textContent='No alarms recorded';tr.append(td);$('alarms').append(tr);}
 }
 applyLanguage();
 async function poll(){await refresh();applyLanguage();setTimeout(poll,1000);}poll();

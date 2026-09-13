@@ -2,3 +2,6 @@
 
 header{flex-wrap:wrap;gap:14px}header>div{flex:1 1 300px}.toolbar{gap:16px;flex-wrap:wrap}.toolbar>div:last-child{display:flex;flex-wrap:wrap;gap:8px}#connection{white-space:nowrap}#language{white-space:nowrap}td,th{white-space:nowrap}.title{gap:12px}.title span{text-align:right}@media(max-width:600px){header>div{flex-basis:100%}.toolbar span{display:block;margin:8px 0}.metric{padding:16px}.metric strong{font-size:26px}}
 
+
+.alarms{margin:20px 0}.alarms p{color:#91a7ba;font-size:12px}.alarms td:nth-child(4){white-space:normal;min-width:220px;max-width:450px}.chart-tip{min-height:22px;font-size:11px;color:#dce8f0;padding:4px 0}.chart svg:focus{outline:1px solid #6cdec0}.chart svg{touch-action:pan-y}
+aside{top:0;left:0}
